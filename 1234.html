@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <title>Reverse Geocoding Example</title>
+    <script src="https://openapi.map.naver.com/openapi/v3/maps-geocoder.js"></script>
 </head>
 <body>
 <script>
@@ -17,7 +18,6 @@ async function getAddressByCoordinates(lat, lng) {
     const clientSecret = 'lfH5x7yYiPEjtakpQNkTv2mzhMwMgYtAQFEQWRWY';
     const coords = `${lng},${lat}`; // API 요청의 좌표 형식: "경도,위도"
     const url = `https://naveropenapi.apigw.ntruss.com/map-reversegeocode/v2/gc?coords=${coords}&sourcecrs=epsg:4326&orders=addr,roadaddr&output=json&X-NCP-APIGW-API-KEY-ID=${clientId}&X-NCP-APIGW-API-KEY=${clientSecret}`;
-
     console.log('Coordinates:', coords);
     console.log('URL:', url);
 
