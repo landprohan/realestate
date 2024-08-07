@@ -36,6 +36,8 @@ async function getAddressByCoordinates(lat, lng) {
     const result = data.results[0];
     const address = result.region.area1.name + ' ' + result.region.area2.name + ' ' + result.region.area3.name;
 
+    alert(result);
+    alert(address);
     document.getElementById('result').innerHTML = `
         <p>위도, 경도: ${lat}, ${lng}</p>
         <p>주소: ${address}</p>
