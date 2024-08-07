@@ -2,22 +2,18 @@
 <html>
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Reverse Geocoding Example</title>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no">
+    <title>위도 경도로 주소 변환</title>
     <script type="text/javascript">
         // 네이버 지도 API를 비동기로 로드
-        function loadNaverMapAPI(callback) {
+        (function() {
             var script = document.createElement('script');
             script.type = 'text/javascript';
             script.src = 'https://openapi.map.naver.com/openapi/v3/maps.js?ncpClientId=y9n3b00wzy&submodules=geocoder';
             script.async = true;
-            script.onload = callback;
-            script.onerror = function() {
-                console.error('Failed to load Naver Map API');
-                alert('Failed to load Naver Map API');
-            };
             document.head.appendChild(script);
-        }
+        })();
     </script>
 </head>
 <body>
@@ -29,22 +25,28 @@ function getQueryParam(param) {
     return urlParams.get(param);
 }
 
+// 네이버 지도 API 로드 완료 후 호출될 함수
+function onLoadNaverMaps() {
+    var latitude = parseFloat(getQueryParam('lat'));
+    var longitude = parseFloat(getQueryParam('lng'));
+
+    if (!isNaN(latitude) && !isNaN(longitude)) {
+        getAddressByCoordinates(latitude, longitude);
+    } else {
+        console.error('Invalid latitude or longitude:', latitude, longitude);
+        alert('Invalid latitude or longitude!');
+    }
+}
+
 function getAddressByCoordinates(lat, lng) {
     console.log('Getting address for coordinates:', lat, lng);
-
-    if (!naver || !naver.maps || !naver.maps.Service || !naver.maps.Service.reverseGeocode) {
-        console.error('Naver Map API is not properly loaded.');
-        alert('Naver Map API is not properly loaded.');
-        return;
-    }
-
+    
     naver.maps.Service.reverseGeocode({
         location: new naver.maps.LatLng(lat, lng),
     }, function(status, response) {
         if (status !== naver.maps.Service.Status.OK) {
             console.error('Geocoding error:', status, response);
-            alert('Something went wrong! Status: ' + status);
-            return;
+            return alert('Something wrong! Status: ' + status);
         }
 
         var result = response.result, // 검색 결과의 컨테이너
@@ -52,8 +54,7 @@ function getAddressByCoordinates(lat, lng) {
 
         if (items.length === 0) {
             console.warn('No address found for coordinates:', lat, lng);
-            alert('No address found!');
-            return;
+            return alert('No address found!');
         }
 
         // 주소 정보 출력
@@ -69,20 +70,14 @@ function getAddressByCoordinates(lat, lng) {
     });
 }
 
-function onLoadNaverMaps() {
-    const latitude = parseFloat(getQueryParam('lat'));
-    const longitude = parseFloat(getQueryParam('lng'));
-
-    if (!isNaN(latitude) && !isNaN(longitude)) {
-        getAddressByCoordinates(latitude, longitude);
+// 네이버 지도 API 스크립트가 로드될 때까지 대기
+(function checkNaverMaps() {
+    if (typeof naver !== 'undefined' && naver.maps && naver.maps.Service) {
+        onLoadNaverMaps();
     } else {
-        console.error('Invalid latitude or longitude:', latitude, longitude);
-        alert('Invalid latitude or longitude!');
+        setTimeout(checkNaverMaps, 100);
     }
-}
-
-// 네이버 지도 API 스크립트가 로드된 후에 주소 변환 함수 호출
-loadNaverMapAPI(onLoadNaverMaps);
+})();
 </script>
 </body>
 </html>
