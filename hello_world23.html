@@ -13,9 +13,7 @@
 
         function returnJsonToClient(jsonData) {
             var jsonStr = JSON.stringify(jsonData);
-            document.open();
-            document.write(jsonStr);
-            document.close();
+            document.body.innerText = jsonStr;
         }
 
         function onLoadNaverMaps() {
