@@ -33,6 +33,11 @@
         function getAddressByCoordinates(lat, lng) {
             console.log('Getting address for coordinates:', lat, lng);
 
+            if (typeof naver === 'undefined' || typeof naver.maps === 'undefined' || typeof naver.maps.Service === 'undefined') {
+                console.error('Naver Maps API is not loaded yet.');
+                return;
+            }
+
             naver.maps.Service.reverseGeocode({
                 location: new naver.maps.LatLng(lat, lng),
             }, function(status, response) {
@@ -67,7 +72,10 @@
             script.type = 'text/javascript';
             script.src = 'https://openapi.map.naver.com/openapi/v3/maps.js?ncpClientId=y9n3b00wzy&submodules=geocoder';
             script.async = true;
-            script.onload = onLoadNaverMaps;
+            script.onload = function() {
+                console.log('Naver Maps API loaded.');
+                onLoadNaverMaps();
+            };
             document.head.appendChild(script);
         }
 
