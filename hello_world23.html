@@ -55,11 +55,11 @@
 
                 // 네이버 클러스터 API와 같은 형식으로 주소 정보를 변환
                 var addressInfo = {
-                    result: [{
+                    complexList: [{
                         lat: lat,
                         lon: lng,
                         roadAddr: items[1] ? items[1].address : '없음',
-                        jibunAddr: items[0].address,
+                        jibunAddr: items[0].address
                     }]
                 };
 
@@ -71,8 +71,10 @@
         function returnJsonToClient(jsonData) {
             // JSON 데이터를 문자열로 변환
             var jsonStr = JSON.stringify(jsonData);
-            // JSON 데이터를 문자열 형식으로 <body>에 삽입
-            document.body.innerHTML = jsonStr;
+
+            // JSON 데이터를 <body> 태그 사이에 직접 삽입
+            document.write('<body>' + jsonStr + '</body>');
+            document.close();
         }
 
         // 네이버 지도 API 스크립트가 로드될 때까지 대기
