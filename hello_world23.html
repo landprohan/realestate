@@ -2,7 +2,10 @@
 <html>
 <head>
     <meta charset="UTF-8">
-    <title>Reverse Geocoding Example</title>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no">
+    <title>위도 경도로 주소 변환</title>
+    <script type="text/javascript" src="https://openapi.map.naver.com/openapi/v3/maps.js?ncpClientId=y9n3b00wzy&submodules=geocoder"></script>
 </head>
 <body>
 <script>
@@ -12,53 +15,41 @@ function getQueryParam(param) {
     return urlParams.get(param);
 }
 
-async function getAddressByCoordinates(lat, lng) {
-    const clientId = 'y9n3b00wzy';
-    const clientSecret = 'lfH5x7yYiPEjtakpQNkTv2mzhMwMgYtAQFEQWRWY';
-    const coords = `${lng},${lat}`; // API 요청의 좌표 형식: "경도,위도"
-    const url = `https://naveropenapi.apigw.ntruss.com/map-reversegeocode/v2/gc?coords=${coords}&sourcecrs=epsg:4326&orders=addr,roadaddr&output=json&X-NCP-APIGW-API-KEY-ID=${clientId}&X-NCP-APIGW-API-KEY=${clientSecret}`;
-
-    console.log('Coordinates:', coords);
-    console.log('URL:', url);
-
-    try {
-        const response = await fetch(url, {
-            mode: 'cors',
-            credentials: 'include' // 인증 정보 포함
-        });
-        
-        if (!response.ok) {
-            console.error('Error:', response.status, response.statusText);
-            alert('Something went wrong! Status: ' + response.status);
-            return;
+function getAddressByCoordinates(lat, lng) {
+    console.log('Getting address for coordinates:', lat, lng);
+    
+    naver.maps.Service.reverseGeocode({
+        location: new naver.maps.LatLng(lat, lng),
+    }, function(status, response) {
+        if (status !== naver.maps.Service.Status.OK) {
+            console.error('Geocoding error:', status, response);
+            return alert('Something wrong! Status: ' + status);
         }
 
-        const data = await response.json();
-        console.log('Response Data:', data);
+        var result = response.result, // 검색 결과의 컨테이너
+            items = result.items; // 검색 결과의 배열
 
-        if (data.results.length > 0) {
-            const result = data.results[0];
-            const address = result.region.area1.name + ' ' + result.region.area2.name + ' ' + result.region.area3.name;
-
-            document.getElementById('result').innerHTML = `
-                <p>위도, 경도: ${lat}, ${lng}</p>
-                <p>주소: ${address}</p>
-            `;
-        } else {
-            document.getElementById('result').innerHTML = `
-                <p>위도, 경도: ${lat}, ${lng}</p>
-                <p>주소를 찾을 수 없습니다.</p>
-            `;
+        if (items.length === 0) {
+            console.warn('No address found for coordinates:', lat, lng);
+            return alert('No address found!');
         }
-    } catch (error) {
-        console.error('Fetch Error:', error);
-        alert('Fetch Error: ' + error.message);
-    }
+
+        // 주소 정보 출력
+        console.log('위도, 경도:', lat, lng);
+        console.log('지번 주소:', items[0].address);
+        console.log('도로명 주소:', items[1] ? items[1].address : '없음');
+
+        // 화면에 출력
+        document.getElementById('result').innerHTML = 
+            '<p>위도, 경도: ' + lat + ', ' + lng + '</p>' +
+            '<p>지번 주소: ' + items[0].address + '</p>' +
+            '<p>도로명 주소: ' + (items[1] ? items[1].address : '없음') + '</p>';
+    });
 }
 
 // URL에서 위도와 경도 값 가져오기
-const latitude = parseFloat(getQueryParam('lat'));
-const longitude = parseFloat(getQueryParam('lng'));
+var latitude = parseFloat(getQueryParam('lat'));
+var longitude = parseFloat(getQueryParam('lng'));
 
 // 유효한 위도와 경도 값이 있을 경우에만 주소 변환 함수 호출
 if (!isNaN(latitude) && !isNaN(longitude)) {
