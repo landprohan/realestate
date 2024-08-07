@@ -14,73 +14,84 @@
             script.async = true;
             document.head.appendChild(script);
         })();
+
+        // URL에서 쿼리 매개변수 가져오는 함수
+        function getQueryParam(param) {
+            var urlParams = new URLSearchParams(window.location.search);
+            return urlParams.get(param);
+        }
+
+        // 네이버 지도 API 로드 완료 후 호출될 함수
+        function onLoadNaverMaps() {
+            var latitude = parseFloat(getQueryParam('lat'));
+            var longitude = parseFloat(getQueryParam('lng'));
+
+            if (!isNaN(latitude) && !isNaN(longitude)) {
+                getAddressByCoordinates(latitude, longitude);
+            } else {
+                console.error('Invalid latitude or longitude:', latitude, longitude);
+                alert('Invalid latitude or longitude!');
+            }
+        }
+
+        function getAddressByCoordinates(lat, lng) {
+            console.log('Getting address for coordinates:', lat, lng);
+            
+            naver.maps.Service.reverseGeocode({
+                location: new naver.maps.LatLng(lat, lng),
+            }, function(status, response) {
+                if (status !== naver.maps.Service.Status.OK) {
+                    console.error('Geocoding error:', status, response);
+                    return alert('Something wrong! Status: ' + status);
+                }
+
+                var result = response.result, // 검색 결과의 컨테이너
+                    items = result.items; // 검색 결과의 배열
+
+                if (items.length === 0) {
+                    console.warn('No address found for coordinates:', lat, lng);
+                    return alert('No address found!');
+                }
+
+                // 주소 정보를 JSON 형식으로 변환
+                var addressInfo = {
+                    lat: lat,
+                    lng: lng,
+                    jibunAddress: items[0].address,
+                    roadAddress: items[1] ? items[1].address : '없음'
+                };
+
+                // JSON 형식으로 출력
+                console.log(JSON.stringify(addressInfo));
+
+                // JSON 데이터를 클라이언트에 반환
+                returnJsonToClient(addressInfo);
+            });
+        }
+
+        function returnJsonToClient(jsonData) {
+            var jsonStr = JSON.stringify(jsonData);
+            var blob = new Blob([jsonStr], { type: 'application/json' });
+            var url = URL.createObjectURL(blob);
+
+            var a = document.createElement('a');
+            a.href = url;
+            a.download = 'address.json';
+            a.click();
+            URL.revokeObjectURL(url);
+        }
+
+        // 네이버 지도 API 스크립트가 로드될 때까지 대기
+        (function checkNaverMaps() {
+            if (typeof naver !== 'undefined' && naver.maps && naver.maps.Service) {
+                onLoadNaverMaps();
+            } else {
+                setTimeout(checkNaverMaps, 100);
+            }
+        })();
     </script>
 </head>
 <body>
 <div id="result"></div>
-<script>
-// URL에서 쿼리 매개변수 가져오는 함수
-function getQueryParam(param) {
-    var urlParams = new URLSearchParams(window.location.search);
-    return urlParams.get(param);
-}
-
-// 네이버 지도 API 로드 완료 후 호출될 함수
-function onLoadNaverMaps() {
-    var latitude = parseFloat(getQueryParam('lat'));
-    var longitude = parseFloat(getQueryParam('lng'));
-
-    if (!isNaN(latitude) && !isNaN(longitude)) {
-        getAddressByCoordinates(latitude, longitude);
-    } else {
-        console.error('Invalid latitude or longitude:', latitude, longitude);
-        alert('Invalid latitude or longitude!');
-    }
-}
-
-function getAddressByCoordinates(lat, lng) {
-    console.log('Getting address for coordinates:', lat, lng);
-    
-    naver.maps.Service.reverseGeocode({
-        location: new naver.maps.LatLng(lat, lng),
-    }, function(status, response) {
-        if (status !== naver.maps.Service.Status.OK) {
-            console.error('Geocoding error:', status, response);
-            return alert('Something wrong! Status: ' + status);
-        }
-
-        var result = response.result, // 검색 결과의 컨테이너
-            items = result.items; // 검색 결과의 배열
-
-        if (items.length === 0) {
-            console.warn('No address found for coordinates:', lat, lng);
-            return alert('No address found!');
-        }
-
-        // 주소 정보를 JSON 형식으로 변환
-        var addressInfo = {
-            lat: lat,
-            lng: lng,
-            jibunAddress: items[0].address,
-            roadAddress: items[1] ? items[1].address : '없음'
-        };
-
-        // JSON 형식으로 출력
-        console.log(JSON.stringify(addressInfo));
-
-        // 화면에 JSON 형식으로 출력
-        document.getElementById('result').textContent = JSON.stringify(addressInfo);
-    });
-}
-
-// 네이버 지도 API 스크립트가 로드될 때까지 대기
-(function checkNaverMaps() {
-    if (typeof naver !== 'undefined' && naver.maps && naver.maps.Service) {
-        onLoadNaverMaps();
-    } else {
-        setTimeout(checkNaverMaps, 100);
-    }
-})();
-</script>
 </body>
 </html>
