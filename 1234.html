@@ -12,6 +12,10 @@
             script.src = 'https://openapi.map.naver.com/openapi/v3/maps.js?ncpClientId=y9n3b00wzy&submodules=geocoder';
             script.async = true;
             script.onload = callback;
+            script.onerror = function() {
+                console.error('Failed to load Naver Map API');
+                alert('Failed to load Naver Map API');
+            };
             document.head.appendChild(script);
         }
     </script>
@@ -27,6 +31,12 @@ function getQueryParam(param) {
 
 function getAddressByCoordinates(lat, lng) {
     console.log('Getting address for coordinates:', lat, lng);
+
+    if (!naver || !naver.maps || !naver.maps.Service || !naver.maps.Service.reverseGeocode) {
+        console.error('Naver Map API is not properly loaded.');
+        alert('Naver Map API is not properly loaded.');
+        return;
+    }
 
     naver.maps.Service.reverseGeocode({
         location: new naver.maps.LatLng(lat, lng),
