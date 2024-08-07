@@ -48,6 +48,9 @@ async function getAddressByCoordinates(lat, lng) {
 const latitude = parseFloat(getQueryParam('lat'));
 const longitude = parseFloat(getQueryParam('lng'));
 
+
+    alert(latitude);
+    alert(longitude);
 // 유효한 위도와 경도 값이 있을 경우에만 주소 변환 함수 호출
 if (!isNaN(latitude) && !isNaN(longitude)) {
     getAddressByCoordinates(latitude, longitude);
