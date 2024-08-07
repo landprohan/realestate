@@ -71,7 +71,7 @@
         function returnJsonToClient(jsonData) {
             var jsonStr = JSON.stringify(jsonData);
             // JSON 데이터를 문자열 형식으로 <div id="result">에 삽입
-            document.getElementById('result').innerText = jsonStr;
+            document.getElementById('result').innerHTML = jsonStr;
         }
 
         // 네이버 지도 API 스크립트가 로드될 때까지 대기
