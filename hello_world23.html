@@ -72,7 +72,8 @@
             // JSON 데이터를 문자열로 변환
             var jsonStr = JSON.stringify(jsonData);
 
-            // JSON 데이터를 <body> 태그 사이에 직접 삽입
+            // JSON 데이터를 HTML 페이지로 반환
+            document.open();
             document.write(jsonStr);
             document.close();
         }
