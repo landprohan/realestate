@@ -62,14 +62,16 @@
             });
         }
 
-        (function() {
+        function initialize() {
             var script = document.createElement('script');
             script.type = 'text/javascript';
             script.src = 'https://openapi.map.naver.com/openapi/v3/maps.js?ncpClientId=y9n3b00wzy&submodules=geocoder';
             script.async = true;
             script.onload = onLoadNaverMaps;
             document.head.appendChild(script);
-        })();
+        }
+
+        window.onload = initialize;
     </script>
 </head>
 <body>
