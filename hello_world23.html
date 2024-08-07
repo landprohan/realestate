@@ -64,21 +64,14 @@
                 // JSON 형식으로 출력
                 console.log(JSON.stringify(addressInfo));
 
-                // JSON 데이터를 클라이언트에 반환
+                // JSON 데이터를 문자열로 클라이언트에 반환
                 returnJsonToClient(addressInfo);
             });
         }
 
         function returnJsonToClient(jsonData) {
             var jsonStr = JSON.stringify(jsonData);
-            var blob = new Blob([jsonStr], { type: 'application/json' });
-            var url = URL.createObjectURL(blob);
-
-            var a = document.createElement('a');
-            a.href = url;
-            a.download = 'address.json';
-            a.click();
-            URL.revokeObjectURL(url);
+            document.getElementById('result').textContent = jsonStr;
         }
 
         // 네이버 지도 API 스크립트가 로드될 때까지 대기
