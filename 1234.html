@@ -6,14 +6,14 @@
     <title>Reverse Geocoding Example</title>
     <script type="text/javascript">
         // 네이버 지도 API를 비동기로 로드
-        (function() {
+        function loadNaverMapAPI(callback) {
             var script = document.createElement('script');
             script.type = 'text/javascript';
             script.src = 'https://openapi.map.naver.com/openapi/v3/maps.js?ncpClientId=y9n3b00wzy&submodules=geocoder';
             script.async = true;
-            script.onload = onLoadNaverMaps;
+            script.onload = callback;
             document.head.appendChild(script);
-        })();
+        }
     </script>
 </head>
 <body>
@@ -70,6 +70,9 @@ function onLoadNaverMaps() {
         alert('Invalid latitude or longitude!');
     }
 }
+
+// 네이버 지도 API 스크립트가 로드된 후에 주소 변환 함수 호출
+loadNaverMapAPI(onLoadNaverMaps);
 </script>
 </body>
 </html>
