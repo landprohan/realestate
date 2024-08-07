@@ -2,9 +2,19 @@
 <html>
 <head>
     <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no">
-    <title>위도 경도로 주소 변환</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reverse Geocoding Example</title>
+    <script type="text/javascript">
+        // 네이버 지도 API를 비동기로 로드
+        (function() {
+            var script = document.createElement('script');
+            script.type = 'text/javascript';
+            script.src = 'https://openapi.map.naver.com/openapi/v3/maps.js?ncpClientId=y9n3b00wzy&submodules=geocoder';
+            script.async = true;
+            script.onload = onLoadNaverMaps;
+            document.head.appendChild(script);
+        })();
+    </script>
 </head>
 <body>
 <div id="result"></div>
@@ -13,16 +23,6 @@
 function getQueryParam(param) {
     var urlParams = new URLSearchParams(window.location.search);
     return urlParams.get(param);
-}
-
-// 네이버 지도 API를 비동기로 로드하는 함수
-function loadNaverMapAPI(callback) {
-    var script = document.createElement('script');
-    script.type = 'text/javascript';
-    script.src = 'https://openapi.map.naver.com/openapi/v3/maps.js?ncpClientId=y9n3b00wzy&submodules=geocoder';
-    script.async = true;
-    script.onload = callback;
-    document.head.appendChild(script);
 }
 
 async function getAddressByCoordinates(lat, lng) {
@@ -40,7 +40,9 @@ async function getAddressByCoordinates(lat, lng) {
             headers: {
                 'X-NCP-APIGW-API-KEY-ID': clientId,
                 'X-NCP-APIGW-API-KEY': clientSecret
-            }
+            },
+            mode: 'cors',
+            credentials: 'include'
         });
 
         if (!response.ok) {
@@ -52,7 +54,7 @@ async function getAddressByCoordinates(lat, lng) {
         const data = await response.json();
         console.log('Response Data:', data);
 
-        if (data.results.length > 0) {
+        if (data.results && data.results.length > 0) {
             const result = data.results[0];
             const address = result.region.area1.name + ' ' + result.region.area2.name + ' ' + result.region.area3.name;
 
@@ -72,7 +74,6 @@ async function getAddressByCoordinates(lat, lng) {
     }
 }
 
-// 네이버 지도 API 스크립트가 로드된 후에 주소 변환 함수 호출
 function onLoadNaverMaps() {
     const latitude = parseFloat(getQueryParam('lat'));
     const longitude = parseFloat(getQueryParam('lng'));
@@ -84,9 +85,6 @@ function onLoadNaverMaps() {
         alert('Invalid latitude or longitude!');
     }
 }
-
-// 네이버 지도 API 스크립트가 로드될 때까지 대기
-loadNaverMapAPI(onLoadNaverMaps);
 </script>
 </body>
 </html>
