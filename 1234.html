@@ -13,6 +13,7 @@ function getQueryParam(param) {
 }
 
 async function getAddressByCoordinates(lat, lng) {
+    alert('2');
     const clientId = 'y9n3b00wzy';
     const clientSecret = 'lfH5x7yYiPEjtakpQNkTv2mzhMwMgYtAQFEQWRWY';
     const coords = `${lng},${lat}`; // API 요청의 좌표 형식: "경도,위도"
@@ -23,13 +24,13 @@ async function getAddressByCoordinates(lat, lng) {
             'X-NCP-APIGW-API-KEY': clientSecret,
         }
     });
-
+alert('3');
     if (!response.ok) {
         console.error('Error:', response.statusText);
         alert('Something went wrong!');
         return;
     }
-
+alert('4');
     const data = await response.json();
     console.log('Response Data:', data);
 
@@ -53,6 +54,7 @@ const longitude = parseFloat(getQueryParam('lng'));
     alert(longitude);
 // 유효한 위도와 경도 값이 있을 경우에만 주소 변환 함수 호출
 if (!isNaN(latitude) && !isNaN(longitude)) {
+    alert('1');
     getAddressByCoordinates(latitude, longitude);
 } else {
     console.error('Invalid latitude or longitude:', latitude, longitude);
