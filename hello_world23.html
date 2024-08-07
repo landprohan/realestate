@@ -16,17 +16,21 @@ function getQueryParam(param) {
 }
 
 function getAddressByCoordinates(lat, lng) {
+    console.log('Getting address for coordinates:', lat, lng);
+    
     naver.maps.Service.reverseGeocode({
         location: new naver.maps.LatLng(lat, lng),
     }, function(status, response) {
         if (status !== naver.maps.Service.Status.OK) {
-            return alert('Something wrong!');
+            console.error('Geocoding error:', status, response);
+            return alert('Something wrong! Status: ' + status);
         }
 
         var result = response.result, // 검색 결과의 컨테이너
             items = result.items; // 검색 결과의 배열
 
         if (items.length === 0) {
+            console.warn('No address found for coordinates:', lat, lng);
             return alert('No address found!');
         }
 
@@ -51,6 +55,7 @@ var longitude = parseFloat(getQueryParam('lng'));
 if (!isNaN(latitude) && !isNaN(longitude)) {
     getAddressByCoordinates(latitude, longitude);
 } else {
+    console.error('Invalid latitude or longitude:', latitude, longitude);
     alert('Invalid latitude or longitude!');
 }
 </script>
