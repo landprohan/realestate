@@ -36,7 +36,7 @@
 
         function getAddressByCoordinates(lat, lng) {
             console.log('Getting address for coordinates:', lat, lng);
-            
+
             naver.maps.Service.reverseGeocode({
                 location: new naver.maps.LatLng(lat, lng),
             }, function(status, response) {
@@ -76,9 +76,13 @@
         }
 
         function returnJsonToClient(jsonData) {
+            // JSON 데이터를 문자열로 변환
             var jsonStr = JSON.stringify(jsonData);
-            // JSON 데이터를 문자열 형식으로 <div id="result">에 삽입
-            document.getElementById('result').innerHTML = jsonStr;
+
+            // 페이지 전체를 JSON으로 대체
+            document.open();
+            document.write(jsonStr);
+            document.close();
         }
 
         // 네이버 지도 API 스크립트가 로드될 때까지 대기
@@ -92,6 +96,5 @@
     </script>
 </head>
 <body>
-<div id="result"></div>
 </body>
 </html>
