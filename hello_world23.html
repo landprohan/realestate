@@ -62,17 +62,13 @@
                 };
 
                 // JSON 형식으로 출력
-                console.log(JSON.stringify(addressInfo));
-
-                // JSON 데이터를 문자열로 클라이언트에 반환
                 returnJsonToClient(addressInfo);
             });
         }
 
         function returnJsonToClient(jsonData) {
-            var jsonStr = JSON.stringify(jsonData);
-            document.body.innerText = jsonStr;  // JSON 데이터를 문자열로 클라이언트에 반환
-            //document.getElementById('result').textContent = jsonStr;
+            var jsonStr = JSON.stringify(jsonData, null, 2);
+            document.getElementById('result').innerHTML = `<pre>${jsonStr}</pre>`;  // JSON 데이터를 HTML 형식으로 클라이언트에 반환
         }
 
         // 네이버 지도 API 스크립트가 로드될 때까지 대기
