@@ -23,20 +23,26 @@
             var longitude = parseFloat(getQueryParam('lng'));
 
             if (!isNaN(latitude) && !isNaN(longitude)) {
-                getAddressByCoordinates(latitude, longitude);
+                waitForNaverMapsAPI(latitude, longitude);
             } else {
                 console.error('Invalid latitude or longitude:', latitude, longitude);
                 alert('Invalid latitude or longitude!');
             }
         }
 
+        function waitForNaverMapsAPI(lat, lng) {
+            if (typeof naver !== 'undefined' && typeof naver.maps !== 'undefined' && typeof naver.maps.Service !== 'undefined') {
+                getAddressByCoordinates(lat, lng);
+            } else {
+                console.log('Waiting for Naver Maps API to load...');
+                setTimeout(function() {
+                    waitForNaverMapsAPI(lat, lng);
+                }, 100);
+            }
+        }
+
         function getAddressByCoordinates(lat, lng) {
             console.log('Getting address for coordinates:', lat, lng);
-
-            if (typeof naver === 'undefined' || typeof naver.maps === 'undefined' || typeof naver.maps.Service === 'undefined') {
-                console.error('Naver Maps API is not loaded yet.');
-                return;
-            }
 
             naver.maps.Service.reverseGeocode({
                 location: new naver.maps.LatLng(lat, lng),
