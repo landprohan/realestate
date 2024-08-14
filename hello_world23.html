@@ -12,15 +12,12 @@
         }
 
         function returnJsonToClient(jsonData) {
-            //var jsonStr = JSON.stringify(jsonData);
-            //document.body.innerText = jsonStr;
-
             // JSON 형식으로 출력
-            console.log(JSON.stringify(addressInfo));
+            console.log(JSON.stringify(jsonData));
 
             // 화면에 JSON 형식으로 출력
-            document.getElementById('result').textContent = JSON.stringify(addressInfo);
-        }
+            document.getElementById('result').textContent = JSON.stringify(jsonData);
+}
 
         function onLoadNaverMaps() {
             var latitude = parseFloat(getQueryParam('lat'));
