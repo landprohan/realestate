@@ -17,7 +17,7 @@
 
             // 화면에 JSON 형식으로 출력
             document.getElementById('result').textContent = JSON.stringify(jsonData);
-}
+        }
 
         function onLoadNaverMaps() {
             var latitude = parseFloat(getQueryParam('lat'));
@@ -90,5 +90,6 @@
     </script>
 </head>
 <body>
+    <div id="result"></div>
 </body>
 </html>
